@@ -794,6 +794,16 @@ public:
     return f.index > 1 && _storage->nodes[f.index].data[2 + f.output].h1 == 14;
   }
 
+  bool is_ha ( node const& n ) const
+  {
+    return n > 1 && _storage->nodes[n].data.size() == 4 && _storage->nodes[n].data[2].h1 == 4 && _storage->nodes[n].data[3].h1 == 12;
+  }
+
+  bool is_fa ( node const& n ) const
+  {
+    return n > 1 && _storage->nodes[n].data.size() == 4 && _storage->nodes[n].data[2].h1 == 14 && _storage->nodes[n].data[3].h1 == 18;
+  }
+
   bool is_ite( node const& n ) const
   {
     return n > 1 && _storage->nodes[n].data.size() == 3 && _storage->nodes[n].data[2].h1 == 16;

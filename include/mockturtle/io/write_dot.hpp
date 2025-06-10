@@ -355,6 +355,257 @@ public:
   }
 };
 
+template<class Ntk>
+class adders_dot_drawer : public default_dot_drawer<Ntk>
+{
+public:
+  virtual std::string node_label( Ntk const& ntk, node<Ntk> const& n ) const override
+  {
+    if constexpr ( has_is_and_v<Ntk> )
+    {
+      if ( ntk.is_and( n ) )
+      {
+        return "AND";
+      }
+    }
+
+    if constexpr ( has_is_or_v<Ntk> )
+    {
+      if ( ntk.is_or( n ) )
+      {
+        return "OR";
+      }
+    }
+
+    if constexpr ( has_is_xor_v<Ntk> )
+    {
+      if ( ntk.is_xor( n ) )
+      {
+        return "XOR";
+      }
+    }
+
+    if constexpr ( has_is_maj_v<Ntk> )
+    {
+      if ( ntk.is_maj( n ) )
+      {
+        std::string label{ "MAJ" };
+        ntk.foreach_fanin( n, [&]( auto const& f ) {
+          if ( ntk.is_constant( ntk.get_node( f ) ) )
+          {
+            const auto v = ntk.constant_value( ntk.get_node( f ) ) != ntk.is_complemented( f );
+            label = v ? "OR" : "AND";
+            return false;
+          }
+          return true;
+        } );
+        return label;
+      }
+    }
+
+    if constexpr ( has_is_ha_v<Ntk> )
+    {
+      if ( ntk.is_ha( n ) )
+      {
+        return "HA";
+      }
+    }
+
+    if constexpr ( has_is_fa_v<Ntk> )
+    {
+      if ( ntk.is_fa( n ) )
+      {
+        return "FA";
+      }
+    }
+
+    if constexpr ( has_is_xor3_v<Ntk> )
+    {
+      if ( ntk.is_xor3( n ) )
+      {
+        return "XOR";
+      }
+    }
+
+    if constexpr ( has_is_nary_and_v<Ntk> )
+    {
+      if ( ntk.is_nary_and( n ) )
+      {
+        return "AND";
+      }
+    }
+
+    if constexpr ( has_is_nary_or_v<Ntk> )
+    {
+      if ( ntk.is_nary_or( n ) )
+      {
+        return "OR";
+      }
+    }
+
+    if constexpr ( has_is_nary_xor_v<Ntk> )
+    {
+      if ( ntk.is_nary_xor( n ) )
+      {
+        return "XOR";
+      }
+    }
+
+    if constexpr ( has_is_buf_v<Ntk> )
+    {
+      if ( ntk.is_buf( n ) && !ntk.is_ci( n ) )
+      {
+        return "BUF";
+      }
+    }
+
+    if constexpr ( has_is_crossing_v<Ntk> )
+    {
+      if ( ntk.is_crossing( n ) )
+      {
+        return "CROSS";
+      }
+    }
+
+    return default_dot_drawer<Ntk>::node_label( ntk, n );
+  }
+
+  virtual std::string node_fillcolor( Ntk const& ntk, node<Ntk> const& n ) const override
+  {
+    if constexpr ( has_is_and_v<Ntk> )
+    {
+      if ( ntk.is_and( n ) )
+      {
+        return "lightcoral";
+      }
+    }
+
+    if constexpr ( has_is_or_v<Ntk> )
+    {
+      if ( ntk.is_or( n ) )
+      {
+        return "palegreen2";
+      }
+    }
+
+    if constexpr ( has_is_xor_v<Ntk> )
+    {
+      if ( ntk.is_xor( n ) )
+      {
+        return "lightskyblue";
+      }
+    }
+
+    if constexpr ( has_is_maj_v<Ntk> )
+    {
+      if ( ntk.is_maj( n ) )
+      {
+        std::string color{ "lightsalmon" };
+        ntk.foreach_fanin( n, [&]( auto const& f ) {
+          if ( ntk.is_constant( ntk.get_node( f ) ) )
+          {
+            const auto v = ntk.constant_value( ntk.get_node( f ) ) != ntk.is_complemented( f );
+            color = v ? "palegreen2" : "lightcoral";
+            return false;
+          }
+          return true;
+        } );
+        return color;
+      }
+    }
+    
+    if constexpr ( has_is_ha_v<Ntk> )
+    {
+      if ( ntk.is_ha( n ) )
+      {
+        return "palegreen2";
+      }
+    }
+
+    if constexpr ( has_is_fa_v<Ntk> )
+    {
+      if ( ntk.is_fa( n ) )
+      {
+        return "lightskyblue";
+      }
+    }
+
+    if constexpr ( has_is_xor3_v<Ntk> )
+    {
+      if ( ntk.is_xor3( n ) )
+      {
+        return "lightskyblue";
+      }
+    }
+
+    if constexpr ( has_is_nary_and_v<Ntk> )
+    {
+      if ( ntk.is_nary_and( n ) )
+      {
+        return "lightcoral";
+      }
+    }
+
+    if constexpr ( has_is_nary_or_v<Ntk> )
+    {
+      if ( ntk.is_nary_or( n ) )
+      {
+        return "palegreen2";
+      }
+    }
+
+    if constexpr ( has_is_nary_xor_v<Ntk> )
+    {
+      if ( ntk.is_nary_xor( n ) )
+      {
+        return "lightskyblue";
+      }
+    }
+
+    if constexpr ( has_is_buf_v<Ntk> )
+    {
+      if ( ntk.is_buf( n ) && !ntk.is_ci( n ) )
+      {
+        return "palegoldenrod";
+      }
+    }
+
+    if constexpr ( has_is_crossing_v<Ntk> )
+    {
+      if ( ntk.is_crossing( n ) )
+      {
+        return "palegoldenrod";
+      }
+    }
+
+    return default_dot_drawer<Ntk>::node_fillcolor( ntk, n );
+  }
+
+  virtual bool draw_signal( Ntk const& ntk, node<Ntk> const& n, signal<Ntk> const& f ) const override
+  {
+    if constexpr ( has_is_maj_v<Ntk> )
+    {
+      if ( ntk.is_maj( n ) )
+      {
+        return !ntk.is_constant( ntk.get_node( f ) );
+      }
+    }
+
+    return default_dot_drawer<Ntk>::draw_signal( ntk, n, f );
+  }
+
+  virtual std::string signal_style( Ntk const& ntk, signal<Ntk> const& f ) const override
+  {
+    std::string rt = ntk.is_complemented( f ) ? "dashed" : "solid";
+    auto const& n = ntk.get_node( f );
+    if ( ntk.is_ha(n) || ntk.is_fa(n) )
+    {
+      rt += f.output == 1 ? ",label=s" : ",label=c";
+    }
+    return rt;
+  }
+};
+
 /*! \brief Writes network in DOT format into output stream
  *
  * An overloaded variant exists that writes the network into a file.
